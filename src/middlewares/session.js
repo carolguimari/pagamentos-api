@@ -3,11 +3,15 @@ const response = require('../controllers/response');
 
 require('dotenv').config();
 
-const verificarSessao = async (ctx, next) => {
-	const token = ctx.headers.authorization.split(' ')[1];
-	if (!token) {
-		response(ctx, 403, { message: 'Ação proibida' });
+const verifySession = async (ctx, next) => {
+	const Token = ctx.headers.authorization;
+	if (Token === undefined) {
+		return response(ctx, 403, {
+			message: 'Para realizar esta ação, faça login',
+		});
 	}
+	// eslint-disable-next-line no-unused-vars
+	const [bearer, token] = Token.split(' ');
 	try {
 		const checkToken = await jwt.verify(token, process.env.JWT_SECRET);
 		ctx.state.id = checkToken.id;
@@ -19,4 +23,4 @@ const verificarSessao = async (ctx, next) => {
 	return next();
 };
 
-module.exports = { verificarSessao };
+module.exports = { verifySession };

@@ -8,6 +8,7 @@ const insertUser = async (user) => {
 			nome,
 			email,
 			senha
+			
 		) VALUES ($1, $2, $3) RETURNING id;`,
 		values: [nome, email, senha],
 	};
