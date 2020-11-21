@@ -2,6 +2,12 @@
 const ClientsDB = require('../repositories/clients');
 const response = require('./response');
 
+const formatarTel = (tel) => {
+	const numeros = tel.trim().replace('-', '');
+	const telFormatado = numeros.slice(-9);
+	return telFormatado;
+};
+
 /** Função para criar um novo cliente e enviar ao banco de dados. Verifica email pré-existente e formata dados */
 
 const createClient = async (ctx) => {
@@ -29,7 +35,7 @@ const createClient = async (ctx) => {
 		nome,
 		cpf: cpf.replace('.', '').replace('.', '').replace('-', ''),
 		email: email.toLowerCase().trim(),
-		tel: tel.trim(),
+		tel: formatarTel(tel),
 	};
 
 	const result = await ClientsDB.insertClient(client);
@@ -45,6 +51,8 @@ const editClient = async (ctx) => {
 		tel = null,
 	} = ctx.request.body;
 
+	const idUser = ctx.state.id;
+
 	if (!id) {
 		return response(ctx, 400, {
 			message: 'Você precisa informar o id do cliente',
@@ -57,18 +65,23 @@ const editClient = async (ctx) => {
 			message: 'Cliente não encontrado',
 		});
 	}
-	const update = {
-		...client,
-		nome: nome || client.nome,
-		cpf: cpf
-			? cpf.replace('.', '').replace('.', '').replace('-', '')
-			: client.cpf,
-		email: email ? email.toLowerCase().trim() : client.email,
-		tel: tel ? tel.trim() : client.tel,
-	};
 
-	const result = await ClientsDB.updateClient(update);
-	return response(ctx, 200, result);
+	if (idUser === Number(client.id_usuario)) {
+		const update = {
+			...client,
+			nome: nome || client.nome,
+			cpf: cpf
+				? cpf.replace('.', '').replace('.', '').replace('-', '')
+				: client.cpf,
+			email: email ? email.toLowerCase().trim() : client.email,
+			tel: tel ? formatarTel(tel) : client.tel,
+		};
+
+		const result = await ClientsDB.updateClient(update);
+		return response(ctx, 200, result);
+	}
+
+	return response(ctx, 403, { message: 'Ação Proibida!' });
 };
 
 module.exports = { createClient, editClient };
