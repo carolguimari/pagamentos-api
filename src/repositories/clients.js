@@ -51,13 +51,15 @@ const getClientById = async (id) => {
 	return result.rows.shift();
 };
 
-const updateClient = async (update) => {
+/** Atualizar dados do cliente de determinado usuráio no banco de dados */
+
+const updateClient = async (id_usuario, update) => {
 	const { id, nome, cpf, email, tel } = update;
 	const query = {
-		text: `UPDATE clientes SET nome = $2,
-		cpf = $3, email = $4, tel = $5 WHERE id = $1
+		text: `UPDATE clientes SET nome = $3,
+		cpf = $4, email = $5, tel = $6 WHERE id = $1 AND id_usuario = $2
 		RETURNING *`,
-		values: [id, nome, cpf, email, tel],
+		values: [id, id_usuario, nome, cpf, email, tel],
 	};
 	const result = await database.query(query);
 

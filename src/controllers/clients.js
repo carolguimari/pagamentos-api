@@ -2,6 +2,8 @@
 const ClientsDB = require('../repositories/clients');
 const response = require('./response');
 
+/** Função auxiliar para formatar números de telefone antes de salvar no banco de dados */
+
 const formatarTel = (tel) => {
 	const numeros = tel.trim().replace('-', '');
 	const telFormatado = numeros.slice(-9);
@@ -19,7 +21,6 @@ const createClient = async (ctx) => {
 	} = ctx.request.body;
 
 	const id_usuario = ctx.state.id;
-	console.log(ctx.state);
 
 	if (!nome || !cpf || !email || !tel) {
 		return response(ctx, 400, { message: 'Requisição mal formatada' });
@@ -42,6 +43,7 @@ const createClient = async (ctx) => {
 	return response(ctx, 201, result);
 };
 
+/** * Função para editar cliente de determinado usuário */
 const editClient = async (ctx) => {
 	const {
 		id = null,
@@ -59,29 +61,42 @@ const editClient = async (ctx) => {
 		});
 	}
 
-	const client = await ClientsDB.getClientById(id);
-	if (!client) {
-		return response(ctx, 404, {
-			message: 'Cliente não encontrado',
+	if (!nome) {
+		return response(ctx, 400, {
+			message: 'Você precisa informar o nome do cliente',
 		});
 	}
 
-	if (idUser === Number(client.id_usuario)) {
-		const update = {
-			...client,
-			nome: nome || client.nome,
-			cpf: cpf
-				? cpf.replace('.', '').replace('.', '').replace('-', '')
-				: client.cpf,
-			email: email ? email.toLowerCase().trim() : client.email,
-			tel: tel ? formatarTel(tel) : client.tel,
-		};
-
-		const result = await ClientsDB.updateClient(update);
-		return response(ctx, 200, result);
+	if (!cpf) {
+		return response(ctx, 400, {
+			message: 'Você precisa informar o cpf do cliente',
+		});
 	}
 
-	return response(ctx, 403, { message: 'Ação Proibida!' });
+	if (!email) {
+		return response(ctx, 400, {
+			message: 'Você precisa informar o e-mail do cliente',
+		});
+	}
+
+	if (!tel) {
+		return response(ctx, 400, {
+			message: 'Você precisa informar o telefone do cliente',
+		});
+	}
+	const update = {
+		id,
+		nome,
+		cpf: cpf.replace('.', '').replace('.', '').replace('-', ''),
+		email: email.toLowerCase().trim(),
+		tel: formatarTel(tel),
+	};
+
+	const result = await ClientsDB.updateClient(idUser, update);
+	if (result) {
+		return response(ctx, 200, result);
+	}
+	return response(ctx, 403, { message: 'Ação Proibida' });
 };
 
 module.exports = { createClient, editClient };
