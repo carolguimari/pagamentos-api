@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-const database = require('../utils/database');
+const database = require('../integrations/database');
 
 /** * Insere novo cliente no banco de dados e retorna o seu id, gerado automaticamente */
 const insertClient = async (client) => {

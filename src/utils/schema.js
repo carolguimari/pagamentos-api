@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable guard-for-in */
-const database = require('./database');
+const database = require('../integrations/database');
 
 const schema = {
 	1: `CREATE TABLE IF NOT EXISTS usuarios (

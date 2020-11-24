@@ -1,4 +1,4 @@
-const database = require('../utils/database');
+const database = require('../integrations/database');
 
 /** * Insere novo usuário no banco de dados e retorna o seu id, gerado automaticamente */
 const insertUser = async (user) => {
