@@ -5,6 +5,7 @@ require('dotenv').config();
 /** Função de integração com a PAGAR.ME para gerar transação com boleto bancário */
 
 const payment = async (data) => {
+	// eslint-disable-next-line camelcase
 	const { name, cpf, amount, boleto_expiration_date } = data;
 
 	const pagarmeClient = await pagarme.client.connect({
@@ -14,7 +15,6 @@ const payment = async (data) => {
 	try {
 		const transaction = await pagarmeClient.transactions.create({
 			amount,
-			postback_url: 'http://requestb.in/pkt7pgpk',
 			payment_method: 'boleto',
 			boleto_expiration_date,
 			capture: true,
@@ -30,9 +30,9 @@ const payment = async (data) => {
 				],
 			},
 		});
-		return JSON.stringify(transaction);
+		return transaction;
 	} catch (error) {
-		return JSON.stringify(error);
+		return error;
 	}
 };
 
