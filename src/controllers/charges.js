@@ -1,7 +1,10 @@
 const ClientsDB = require('../repositories/clients');
+const ChargesDB = require('../repositories/charges');
 const response = require('./response');
 const Pagarme = require('../integrations/pagarme');
 const { sendEmail } = require('../integrations/nodemailer');
+
+/** Função para criar cobrança, enviar email com link do boleto bancário e salvar cobrança no banco de dados */
 
 const createCharge = async (ctx) => {
 	const { id, descricao, valor, vencimento } = ctx.request.body;
@@ -25,6 +28,7 @@ const createCharge = async (ctx) => {
 	if (charge.hasOwnProperty('errors')) {
 		return response(ctx, 503, { message: 'Operação não realizada' });
 	}
+
 	await sendEmail({
 		to: client.email,
 		subject: `Seu boleto: ${descricao}`,
@@ -38,7 +42,17 @@ const createCharge = async (ctx) => {
 			<h1 style="font-family: sans-serif"> Obrigado pela compra!</h1>
 			<td> <a href=${charge.boleto_url} target="_blank">Clique aqui para baixar o boleto</a> </td>
 			<p style="font-family: sans-serif"> ou copie o código de barras ${charge.boleto_barcode}</p>
-			</body>`,
+			</body>
+			</html>`,
+	});
+
+	const DB = await ChargesDB.insertCharge({
+		id_cliente: client.id,
+		descricao,
+		valor,
+		vencimento,
+		link_do_boleto: charge.boleto_url,
+		codigo_de_barras: charge.boleto_barcode,
 	});
 
 	return response(ctx, 201, {
@@ -49,6 +63,7 @@ const createCharge = async (ctx) => {
 			vencimento: vencimento.split('-').reverse().join('/'),
 			linkDoBoleto: charge.boleto_url,
 			status: 'AGUARDANDO',
+			DB,
 		},
 	});
 };

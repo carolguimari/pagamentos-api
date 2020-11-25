@@ -26,8 +26,9 @@ const schema = {
 		valor INTEGER NOT NULL,
 		vencimento DATE NOT NULL,
 		link_do_boleto TEXT NOT NULL,
+		codigo_de_barras TEXT NOT NULL,
 		esta_pago BOOL DEFAULT FALSE,
-		data_pagamento DATE NOT NULL
+		data_pagamento DATE
 	);`,
 };
 
