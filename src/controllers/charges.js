@@ -8,11 +8,14 @@ const { sendEmail } = require('../integrations/nodemailer');
 
 const createCharge = async (ctx) => {
 	const { id, descricao, valor, vencimento } = ctx.request.body;
+
+	const idUser = ctx.state.id;
+
 	if (!id || !descricao || !valor || !vencimento) {
 		return response(ctx, 400, { message: 'Requisição mal formatada' });
 	}
 
-	const client = await ClientsDB.getClientById(id);
+	const client = await ClientsDB.getClientById(id, idUser);
 	if (!client) {
 		return response(ctx, 404, { message: 'Cliente não encontrado' });
 	}

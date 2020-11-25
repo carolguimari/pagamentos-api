@@ -37,16 +37,16 @@ const getClientByEmail = async (email) => {
 };
 
 /** * Busca cliente no banco de dados a partir do id fornecido */
-const getClientById = async (id) => {
-	if (!id) {
+const getClientById = async (id, id_usuario) => {
+	if (!id || !id_usuario) {
 		return null;
 	}
-
-	const query = `SELECT * FROM clientes WHERE id = $1 AND deletado = false`;
-	const result = await database.query({
-		text: query,
-		values: [id],
-	});
+	const query = {
+		text: `SELECT * FROM clientes WHERE id = $1 AND id_usuario = $2
+		AND deletado = false`,
+		values: [id, id_usuario],
+	};
+	const result = await database.query(query);
 
 	return result.rows.shift();
 };
