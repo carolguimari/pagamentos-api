@@ -15,6 +15,12 @@ const createCharge = async (ctx) => {
 		return response(ctx, 400, { message: 'Requisição mal formatada' });
 	}
 
+	if (!idUser) {
+		return response(ctx, 403, {
+			message: 'Você precisa fazer login para realizar esta ação',
+		});
+	}
+
 	const client = await ClientsDB.getClientById(id, idUser);
 	if (!client) {
 		return response(ctx, 404, { message: 'Cliente não encontrado' });
@@ -71,4 +77,54 @@ const createCharge = async (ctx) => {
 	});
 };
 
-module.exports = { createCharge };
+/** * Função de listar cobranças e verificar status de pagamento */
+
+const getCharges = async (ctx) => {
+	const { cobrancasPorPagina = 10, offset = 0 } = ctx.query;
+	const idUser = ctx.state.id;
+
+	if (!idUser) {
+		return response(ctx, 403, {
+			message: 'Você precisa fazer login para realizar esta ação',
+		});
+	}
+
+	const list = await ChargesDB.findCharges(
+		idUser,
+		cobrancasPorPagina,
+		offset
+	);
+	const result = list.map((charge) => {
+		if (charge.esta_pago) {
+			return {
+				idDoCliente: charge.id_cliente,
+				descricao: charge.descricao,
+				valor: charge.valor,
+				vencimento: charge.vencimento,
+				linkDoBoleto: charge.link_do_boleto,
+				status: 'PAGO',
+			};
+		}
+		if (+charge.vencimento > +new Date()) {
+			return {
+				idDoCliente: charge.id_cliente,
+				descricao: charge.descricao,
+				valor: charge.valor,
+				vencimento: charge.vencimento,
+				linkDoBoleto: charge.link_do_boleto,
+				status: 'AGUARDANDO',
+			};
+		}
+		return {
+			idDoCliente: charge.id_cliente,
+			descricao: charge.descricao,
+			valor: charge.valor,
+			vencimento: charge.vencimento,
+			linkDoBoleto: charge.link_do_boleto,
+			status: 'VENCIDO',
+		};
+	});
+	return response(ctx, 200, result);
+};
+
+module.exports = { createCharge, getCharges };
