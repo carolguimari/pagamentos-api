@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 const database = require('../integrations/database');
 
-/** * Insere uma nova cobrança no banco de dados */
+/**  Insere uma nova cobrança no banco de dados */
 
 const insertCharge = async (charge) => {
 	const {
@@ -23,7 +23,7 @@ const insertCharge = async (charge) => {
 			codigo_de_barras,
 			esta_pago
 			
-		) VALUES ($1, $2, $3, $4, $5, $6, $7);`,
+		) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;`,
 		values: [
 			id_cliente,
 			descricao,
@@ -34,12 +34,12 @@ const insertCharge = async (charge) => {
 			false,
 		],
 	};
-	await database.query(query);
+	const idDaCobranca = await database.query(query);
 
-	return 'Cobrança criada com sucesso';
+	return idDaCobranca.rows.shift();
 };
 
-/** * Busca cobranças no banco de dados dos clientes de determinado usuário */
+/** Busca cobranças no banco de dados dos clientes de determinado usuário */
 
 const findCharges = async (id_usuario, limit, offset) => {
 	const query = {
@@ -53,4 +53,18 @@ const findCharges = async (id_usuario, limit, offset) => {
 	return result.rows;
 };
 
-module.exports = { insertCharge, findCharges };
+/** Registra a cobrança paga no banco de dados e guarda a data de pagamento  */
+
+const payForCharge = async (id, data_pagamento) => {
+	const query = {
+		text: `UPDATE cobrancas
+		SET esta_pago = $1, data_pagamento = $2
+		WHERE id = $3 RETURNING *`,
+		values: [true, data_pagamento, id],
+	};
+
+	const result = await database.query(query);
+	return result.rows.shift();
+};
+
+module.exports = { insertCharge, findCharges, payForCharge };

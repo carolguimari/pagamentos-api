@@ -17,5 +17,6 @@ router.put('/clientes', Session.verifySession, Clients.editClient);
 router.get('/clientes');
 router.post('/cobrancas', Session.verifySession, Charges.createCharge);
 router.get('/cobrancas', Session.verifySession, Charges.getCharges);
+router.put('/cobrancas', Session.verifySession, Charges.payCharge);
 
 module.exports = router;

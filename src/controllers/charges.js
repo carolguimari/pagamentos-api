@@ -64,7 +64,7 @@ const createCharge = async (ctx) => {
 			</html>`,
 	});
 
-	const DB = await ChargesDB.insertCharge({
+	const idDaCobranca = await ChargesDB.insertCharge({
 		id_cliente: client.id,
 		descricao,
 		valor,
@@ -81,12 +81,12 @@ const createCharge = async (ctx) => {
 			vencimento: vencimento.split('-').reverse().join('/'),
 			linkDoBoleto: charge.boleto_url,
 			status: 'AGUARDANDO',
-			DB,
+			idDaCobranca,
 		},
 	});
 };
 
-/** * Função de listar cobranças e verificar status de pagamento */
+/** Função de listar cobranças e verificar status de pagamento */
 
 const getCharges = async (ctx) => {
 	const { cobrancasPorPagina = 10, offset = 0 } = ctx.query;
@@ -136,4 +136,25 @@ const getCharges = async (ctx) => {
 	return response(ctx, 200, result);
 };
 
-module.exports = { createCharge, getCharges };
+/** Função de pagamento de uma cobrança */
+
+const payCharge = async (ctx) => {
+	const { idDaCobranca = null } = ctx.request.body;
+	const idUser = ctx.state.id;
+
+	if (!idUser) {
+		return response(ctx, 403, {
+			message: 'Você precisa fazer login para realizar esta ação',
+		});
+	}
+
+	const date = new Date();
+	const result = await ChargesDB.payForCharge(idDaCobranca, date);
+
+	if (result) {
+		return response(ctx, 200, { message: 'Cobrança paga com sucesso' });
+	}
+	return response(ctx, 503, { message: 'Erro no pagamento' });
+};
+
+module.exports = { createCharge, getCharges, payCharge };
