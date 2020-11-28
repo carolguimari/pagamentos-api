@@ -26,6 +26,10 @@ const createCharge = async (ctx) => {
 		return response(ctx, 404, { message: 'Cliente não encontrado' });
 	}
 
+	if (+vencimento < +new Date()) {
+		return response(ctx, 400, { message: 'Insira uma data válida' });
+	}
+
 	const charge = await Pagarme.payment({
 		name: client.nome,
 		cpf: client.cpf,
@@ -35,7 +39,12 @@ const createCharge = async (ctx) => {
 
 	// eslint-disable-next-line no-prototype-builtins
 	if (charge.hasOwnProperty('errors')) {
-		return response(ctx, 503, { message: 'Operação não realizada' });
+		JSON.stringify(charge);
+		const error = charge.substr(96);
+		console.log(error);
+		return response(ctx, 400, {
+			message: `Operação não realizada: ${error}`,
+		});
 	}
 
 	await sendEmail({
