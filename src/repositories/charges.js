@@ -67,4 +67,18 @@ const payForCharge = async (id, data_pagamento) => {
 	return result.rows.shift();
 };
 
-module.exports = { insertCharge, findCharges, payForCharge };
+const findChargesPerCliente = async (id_cliente) => {
+	const query = {
+		text: `SELECT * from cobrancas WHERE id_cliente = $1`,
+		values: [id_cliente],
+	};
+	const result = await database.query(query);
+	return result.rows;
+};
+
+module.exports = {
+	insertCharge,
+	findCharges,
+	payForCharge,
+	findChargesPerCliente,
+};

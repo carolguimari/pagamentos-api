@@ -14,7 +14,7 @@ router.post('/auth', Auth.loginUser);
 router.post('/usuarios', Encrypt.encrypt, Users.createUser);
 router.post('/clientes', Session.verifySession, Clients.createClient);
 router.put('/clientes', Session.verifySession, Clients.editClient);
-router.get('/clientes');
+router.get('/clientes', Session.verifySession, Clients.getClients);
 router.post('/cobrancas', Session.verifySession, Charges.createCharge);
 router.get('/cobrancas', Session.verifySession, Charges.getCharges);
 router.put('/cobrancas', Session.verifySession, Charges.payCharge);

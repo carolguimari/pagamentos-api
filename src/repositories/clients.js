@@ -66,9 +66,23 @@ const updateClient = async (id_usuario, update) => {
 	return result.rows.shift();
 };
 
+const findClients = async (id_usuario, limit, offset) => {
+	const query = {
+		text: `SELECT * FROM clientes
+		INNER JOIN cobrancas
+		ON cast(cobrancas.id_cliente as integer) = clientes.id
+		WHERE clientes.id_usuario = $1 LIMIT $2 OFFSET $3`,
+		values: [id_usuario, limit, offset],
+	};
+
+	const result = await database.query(query);
+	return result.rows;
+};
+
 module.exports = {
 	insertClient,
 	getClientByEmail,
 	getClientById,
 	updateClient,
+	findClients,
 };

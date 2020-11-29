@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 const ClientsDB = require('../repositories/clients');
 const response = require('./response');
+const Reports = require('./reports');
 
 /** Função auxiliar para formatar números de telefone antes de salvar no banco de dados */
 
@@ -21,6 +22,11 @@ const createClient = async (ctx) => {
 	} = ctx.request.body;
 
 	const id_usuario = ctx.state.id;
+	if (!id_usuario) {
+		return response(ctx, 403, {
+			message: 'Você precisa fazer login para realizar esta ação',
+		});
+	}
 
 	if (!nome || !cpf || !email || !tel) {
 		return response(ctx, 400, { message: 'Requisição mal formatada' });
@@ -31,7 +37,7 @@ const createClient = async (ctx) => {
 		return response(ctx, 403, { message: 'Cliente já cadastrado' });
 	}
 
-	const client = {
+	const newClient = {
 		id_usuario,
 		nome,
 		cpf: cpf.replace('.', '').replace('.', '').replace('-', ''),
@@ -39,7 +45,7 @@ const createClient = async (ctx) => {
 		tel: formatarTel(tel),
 	};
 
-	const result = await ClientsDB.insertClient(client);
+	const result = await ClientsDB.insertClient(newClient);
 	return response(ctx, 201, result);
 };
 
@@ -54,6 +60,11 @@ const editClient = async (ctx) => {
 	} = ctx.request.body;
 
 	const idUser = ctx.state.id;
+	if (!idUser) {
+		return response(ctx, 403, {
+			message: 'Você precisa fazer login para realizar esta ação',
+		});
+	}
 
 	if (!id) {
 		return response(ctx, 400, {
@@ -99,4 +110,34 @@ const editClient = async (ctx) => {
 	return response(ctx, 403, { message: 'Ação Proibida' });
 };
 
-module.exports = { createClient, editClient };
+const getClients = async (ctx) => {
+	const { clientesPorPagina = 10, offset = 0 } = ctx.query;
+
+	const idUser = ctx.state.id;
+	if (!idUser) {
+		return response(ctx, 403, {
+			message: 'Você precisa fazer login para realizar esta ação',
+		});
+	}
+
+	const clients = await ClientsDB.findClients(
+		idUser,
+		clientesPorPagina,
+		offset
+	);
+	if (clients) {
+		await clients.forEach((dado) => {
+			Reports.calculateClientsReport(
+				dado.nome,
+				dado.email,
+				dado.esta_pago,
+				dado.valor,
+				dado.vencimento
+			);
+		});
+		const result = Reports.clientsReport;
+		return response(ctx, 200, { clientes: [...result] });
+	}
+};
+
+module.exports = { createClient, editClient, getClients };

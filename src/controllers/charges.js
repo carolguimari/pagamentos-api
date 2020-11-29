@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 const ClientsDB = require('../repositories/clients');
 const ChargesDB = require('../repositories/charges');
 const response = require('./response');
@@ -133,7 +134,7 @@ const getCharges = async (ctx) => {
 			status: 'VENCIDO',
 		};
 	});
-	return response(ctx, 200, result);
+	return response(ctx, 200, { cobranças: [result] });
 };
 
 /** Função de pagamento de uma cobrança */
@@ -157,4 +158,8 @@ const payCharge = async (ctx) => {
 	return response(ctx, 503, { message: 'Erro no pagamento' });
 };
 
-module.exports = { createCharge, getCharges, payCharge };
+module.exports = {
+	createCharge,
+	getCharges,
+	payCharge,
+};
