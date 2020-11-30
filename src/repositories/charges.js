@@ -76,9 +76,22 @@ const findChargesPerCliente = async (id_cliente) => {
 	return result.rows;
 };
 
+const findAllCharges = async (id_usuario) => {
+	const query = {
+		text: `SELECT * from cobrancas 
+		INNER JOIN clientes ON cast(cobrancas.id_cliente as integer) = clientes.id
+		WHERE clientes.id_usuario = $1`,
+		values: [id_usuario],
+	};
+	const result = await database.query(query);
+
+	return result.rows;
+};
+
 module.exports = {
 	insertCharge,
 	findCharges,
 	payForCharge,
 	findChargesPerCliente,
+	findAllCharges,
 };

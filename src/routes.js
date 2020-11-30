@@ -8,6 +8,7 @@ const Clients = require('./controllers/clients');
 const Auth = require('./controllers/auth');
 const Session = require('./middlewares/session');
 const Charges = require('./controllers/charges');
+const Report = require('./controllers/reports');
 
 router.post('/auth', Auth.loginUser);
 
@@ -18,5 +19,6 @@ router.get('/clientes', Session.verifySession, Clients.getClients);
 router.post('/cobrancas', Session.verifySession, Charges.createCharge);
 router.get('/cobrancas', Session.verifySession, Charges.getCharges);
 router.put('/cobrancas', Session.verifySession, Charges.payCharge);
+router.get('/relatorios', Session.verifySession, Report.getReport);
 
 module.exports = router;

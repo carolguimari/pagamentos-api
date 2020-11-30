@@ -110,6 +110,7 @@ const editClient = async (ctx) => {
 	return response(ctx, 403, { message: 'Ação Proibida' });
 };
 
+/** Função para listar clientes de determinado usuário; todos ou buscando por nome ou e-mail, retornando informações sobre as cobranças de cada */
 const getClients = async (ctx) => {
 	const { busca = null, clientesPorPagina = 10, offset = 0 } = ctx.query;
 
@@ -139,6 +140,7 @@ const getClients = async (ctx) => {
 			const result = Reports.clientsReport;
 			return response(ctx, 200, { clientes: [...result] });
 		}
+		return response(ctx, 404, { message: 'Conteúdo não encontrado' });
 	}
 
 	const clients = await ClientsDB.findClients(
@@ -159,6 +161,7 @@ const getClients = async (ctx) => {
 		const result = Reports.clientsReport;
 		return response(ctx, 200, { clientes: [...result] });
 	}
+	return response(ctx, 404, { message: 'Conteúdo não encontrado' });
 };
 
 module.exports = { createClient, editClient, getClients };
