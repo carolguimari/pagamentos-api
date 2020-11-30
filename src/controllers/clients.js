@@ -111,13 +111,34 @@ const editClient = async (ctx) => {
 };
 
 const getClients = async (ctx) => {
-	const { clientesPorPagina = 10, offset = 0 } = ctx.query;
+	const { busca = null, clientesPorPagina = 10, offset = 0 } = ctx.query;
 
 	const idUser = ctx.state.id;
 	if (!idUser) {
 		return response(ctx, 403, {
 			message: 'Você precisa fazer login para realizar esta ação',
 		});
+	}
+	if (busca) {
+		const clients = await ClientsDB.findClientsByNameOrEmail(
+			idUser,
+			clientesPorPagina,
+			offset,
+			busca
+		);
+		if (clients) {
+			await clients.forEach((dado) => {
+				Reports.calculateClientsReport(
+					dado.nome,
+					dado.email,
+					dado.esta_pago,
+					dado.valor,
+					dado.vencimento
+				);
+			});
+			const result = Reports.clientsReport;
+			return response(ctx, 200, { clientes: [...result] });
+		}
 	}
 
 	const clients = await ClientsDB.findClients(

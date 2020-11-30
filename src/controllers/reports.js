@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+/* eslint-disable no-unused-expressions */
 const client = require('../integrations/database');
 
 const clientsReport = new Map();

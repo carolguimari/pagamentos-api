@@ -79,10 +79,25 @@ const findClients = async (id_usuario, limit, offset) => {
 	return result.rows;
 };
 
+const findClientsByNameOrEmail = async (id_usuario, limit, offset, busca) => {
+	const query = {
+		text: `SELECT * FROM clientes
+		INNER JOIN cobrancas
+		ON cast(cobrancas.id_cliente as integer) = clientes.id
+		WHERE clientes.id_usuario = $1 AND nome LIKE $4 OR email LIKE $4
+		LIMIT $2 OFFSET $3`,
+		values: [id_usuario, limit, offset, `%${busca}%`],
+	};
+
+	const result = await database.query(query);
+	return result.rows;
+};
+
 module.exports = {
 	insertClient,
 	getClientByEmail,
 	getClientById,
 	updateClient,
 	findClients,
+	findClientsByNameOrEmail,
 };
