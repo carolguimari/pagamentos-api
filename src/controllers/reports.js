@@ -66,10 +66,10 @@ const getReport = async (ctx) => {
 	let qtdClientesAdimplentes = 0;
 	let qtdClientesInadimplentes = 0;
 
-	if (inadimplentes.length === undefined) {
+	if (inadimplentes.size === 0) {
 		qtdClientesAdimplentes = allClients.size;
 	} else {
-		qtdClientesInadimplentes = inadimplentes.length;
+		qtdClientesInadimplentes = inadimplentes.size;
 		qtdClientesAdimplentes = allClients.size - qtdClientesInadimplentes;
 	}
 
