@@ -67,6 +67,8 @@ const payForCharge = async (id, data_pagamento) => {
 	return result.rows.shift();
 };
 
+/** Busca as cobranças de detarminado cliente. Para futura atualização da aplicação */
+
 const findChargesPerCliente = async (id_cliente) => {
 	const query = {
 		text: `SELECT * from cobrancas WHERE id_cliente = $1`,
@@ -75,6 +77,8 @@ const findChargesPerCliente = async (id_cliente) => {
 	const result = await database.query(query);
 	return result.rows;
 };
+
+/** Busca cobranças de todos os clientes de determinado usuário. Utilizada para gerar relatório */
 
 const findAllCharges = async (id_usuario) => {
 	const query = {

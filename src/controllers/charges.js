@@ -132,7 +132,13 @@ const getCharges = async (ctx) => {
 			status: 'VENCIDO',
 		};
 	});
-	return response(ctx, 200, { cobranças: [result] });
+	const pages = Math.ceil(result.length / cobrancasPorPagina);
+	const currentPage = Math.floor(offset / cobrancasPorPagina) + 1;
+	return response(ctx, 200, {
+		paginaAtual: currentPage,
+		totalDePaginas: pages,
+		cobranças: [result],
+	});
 };
 
 /** Função de pagamento de uma cobrança */

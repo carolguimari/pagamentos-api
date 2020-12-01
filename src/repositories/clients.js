@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 const database = require('../integrations/database');
 
-/** * Insere novo cliente no banco de dados e retorna o seu id, gerado automaticamente */
+/** Insere novo cliente no banco de dados e retorna o seu id, gerado automaticamente */
 const insertClient = async (client) => {
 	const { id_usuario, nome, cpf, email, tel } = client;
 	const query = {
@@ -20,7 +20,7 @@ const insertClient = async (client) => {
 	return result.rows.shift();
 };
 
-/** * Busca cliente no banco de dados a partir do email fornecido */
+/** Busca cliente no banco de dados a partir do email fornecido */
 
 const getClientByEmail = async (email) => {
 	if (!email) {
@@ -36,7 +36,8 @@ const getClientByEmail = async (email) => {
 	return result.rows.shift();
 };
 
-/** * Busca cliente no banco de dados a partir do id fornecido */
+/** Busca cliente no banco de dados a partir do id fornecido */
+
 const getClientById = async (id, id_usuario) => {
 	if (!id || !id_usuario) {
 		return null;
@@ -66,6 +67,8 @@ const updateClient = async (id_usuario, update) => {
 	return result.rows.shift();
 };
 
+/** Busca os clientes e suas respectivas cobranças para determinado usuário */
+
 const findClients = async (id_usuario, limit, offset) => {
 	const query = {
 		text: `SELECT * FROM clientes
@@ -78,6 +81,8 @@ const findClients = async (id_usuario, limit, offset) => {
 	const result = await database.query(query);
 	return result.rows;
 };
+
+/** Busca clientes por nome ou e-mail e suas respectivas cobranças para determinado usuário */
 
 const findClientsByNameOrEmail = async (id_usuario, limit, offset, busca) => {
 	const query = {
