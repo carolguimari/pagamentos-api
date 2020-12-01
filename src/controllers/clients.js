@@ -123,7 +123,6 @@ const getClients = async (ctx) => {
 	if (busca) {
 		const clients = await ClientsDB.findClientsByNameOrEmail(
 			idUser,
-			100,
 			offset,
 			busca
 		);
@@ -149,7 +148,7 @@ const getClients = async (ctx) => {
 		return response(ctx, 404, { message: 'Conteúdo não encontrado' });
 	}
 
-	const clients = await ClientsDB.findClients(idUser, 100, offset);
+	const clients = await ClientsDB.findClients(idUser, offset);
 	if (clients) {
 		await clients.forEach((dado) => {
 			Reports.calculateClientsReport(

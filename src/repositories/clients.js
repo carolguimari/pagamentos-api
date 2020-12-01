@@ -69,13 +69,13 @@ const updateClient = async (id_usuario, update) => {
 
 /** Busca os clientes e suas respectivas cobranças para determinado usuário */
 
-const findClients = async (id_usuario, limit, offset) => {
+const findClients = async (id_usuario, offset) => {
 	const query = {
 		text: `SELECT * FROM clientes
 		INNER JOIN cobrancas
 		ON cast(cobrancas.id_cliente as integer) = clientes.id
-		WHERE clientes.id_usuario = $1 LIMIT $2 OFFSET $3`,
-		values: [id_usuario, limit, offset],
+		WHERE clientes.id_usuario = $1 OFFSET $2`,
+		values: [id_usuario, offset],
 	};
 
 	const result = await database.query(query);
@@ -84,14 +84,14 @@ const findClients = async (id_usuario, limit, offset) => {
 
 /** Busca clientes por nome ou e-mail e suas respectivas cobranças para determinado usuário */
 
-const findClientsByNameOrEmail = async (id_usuario, limit, offset, busca) => {
+const findClientsByNameOrEmail = async (id_usuario, offset, busca) => {
 	const query = {
 		text: `SELECT * FROM clientes
 		INNER JOIN cobrancas
 		ON cast(cobrancas.id_cliente as integer) = clientes.id
-		WHERE clientes.id_usuario = $1 AND nome LIKE $4 OR email LIKE $4
-		LIMIT $2 OFFSET $3`,
-		values: [id_usuario, limit, offset, `%${busca}%`],
+		WHERE clientes.id_usuario = $1 AND nome LIKE $3 OR email LIKE $3
+		OFFSET $2`,
+		values: [id_usuario, offset, `%${busca}%`],
 	};
 
 	const result = await database.query(query);
