@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 /* eslint-disable no-restricted-syntax */
 const ClientsDB = require('../repositories/clients');
 const ChargesDB = require('../repositories/charges');
@@ -37,15 +38,12 @@ const createCharge = async (ctx) => {
 		amount: valor,
 		boleto_expiration_date: vencimento,
 	});
-
 	// eslint-disable-next-line no-prototype-builtins
-	if (charge.hasOwnProperty('errors')) {
-		JSON.stringify(charge);
-		const error = charge.substr(96);
-		console.log(error);
-		return response(ctx, 400, {
-			message: `Operação não realizada: ${error}`,
-		});
+	if (
+		charge.hasOwnProperty('response') &&
+		charge.response.hasOwnProperty('errors')
+	) {
+		return response(ctx, 400, charge);
 	}
 
 	await sendEmail({
