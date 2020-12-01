@@ -143,7 +143,7 @@ const getClients = async (ctx) => {
 			return response(ctx, 200, {
 				paginaAtual: currentPage,
 				totalDePaginas: pages,
-				clientes: [...result],
+				clientes: [...result].slice(0, `${clientesPorPagina}`),
 			});
 		}
 		return response(ctx, 404, { message: 'Conteúdo não encontrado' });
@@ -166,7 +166,7 @@ const getClients = async (ctx) => {
 		return response(ctx, 200, {
 			paginaAtual: currentPage,
 			totalDePaginas: pages,
-			clientes: [...result],
+			clientes: [...result].slice(0, `${clientesPorPagina}`),
 		});
 	}
 	return response(ctx, 404, { message: 'Conteúdo não encontrado' });
