@@ -23,6 +23,7 @@ const calculateClientsReport = (nome, email, esta_pago, valor, vencimento) => {
 			: !findClient.estaInadimplente;
 	} else {
 		clientsReport.set(nome, {
+			nome,
 			email,
 			cobrancasFeitas: valor,
 			cobrancasRecebidas: esta_pago ? valor : 0,
