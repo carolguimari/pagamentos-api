@@ -72,7 +72,7 @@ const updateClient = async (id_usuario, update) => {
 const findClients = async (id_usuario, offset) => {
 	const query = {
 		text: `SELECT * FROM clientes
-		INNER JOIN cobrancas
+		LEFT JOIN cobrancas
 		ON cast(cobrancas.id_cliente as integer) = clientes.id
 		WHERE clientes.id_usuario = $1 OFFSET $2`,
 		values: [id_usuario, offset],

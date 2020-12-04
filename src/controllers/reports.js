@@ -9,7 +9,6 @@ const clientsReport = new Map();
 /** Calcula as cobranças recebidas e pgadas para cada cliente, idenfica status de adimplência e retorna resultados
  * para o controller de clientes
  */
-
 const calculateClientsReport = (nome, email, esta_pago, valor, vencimento) => {
 	const findClient = clientsReport.get(nome);
 
@@ -25,9 +24,9 @@ const calculateClientsReport = (nome, email, esta_pago, valor, vencimento) => {
 		clientsReport.set(nome, {
 			nome,
 			email,
-			cobrancasFeitas: valor,
+			cobrancasFeitas: valor || 0,
 			cobrancasRecebidas: esta_pago ? valor : 0,
-			estaInadimplente: +vencimento < +new Date(),
+			estaInadimplente: valor ? +vencimento < +new Date() : false,
 		});
 	}
 };
