@@ -87,7 +87,7 @@ const findClients = async (id_usuario, offset) => {
 const findClientsByNameOrEmail = async (id_usuario, offset, busca) => {
 	const query = {
 		text: `SELECT * FROM clientes
-		INNER JOIN cobrancas
+		LEFT JOIN cobrancas
 		ON cast(cobrancas.id_cliente as integer) = clientes.id
 		WHERE clientes.id_usuario = $1 AND nome LIKE $3 OR email LIKE $3
 		OFFSET $2`,

@@ -113,7 +113,6 @@ const editClient = async (ctx) => {
 /** Função para listar clientes de determinado usuário; todos ou buscando por nome ou e-mail, retornando informações sobre as cobranças de cada */
 const getClients = async (ctx) => {
 	const { busca = null, clientesPorPagina = 10, offset = 0 } = ctx.query;
-
 	const idUser = ctx.state.id;
 	if (!idUser) {
 		return response(ctx, 403, {
@@ -136,13 +135,15 @@ const getClients = async (ctx) => {
 					dado.vencimento
 				);
 			});
-			const result = Reports.clientsReport;
-			const pages = Math.ceil(result.size / clientesPorPagina);
+			const result = [...Reports.clientsReport.values()];
+			const pages = Math.ceil(
+				Reports.clientsReport.size / clientesPorPagina
+			);
 			const currentPage = Math.floor(offset / clientesPorPagina) + 1;
 			return response(ctx, 200, {
 				paginaAtual: currentPage,
 				totalDePaginas: pages,
-				clientes: [...result].slice(0, `${clientesPorPagina}`),
+				clientes: result.slice(0, `${clientesPorPagina}`),
 			});
 		}
 		return response(ctx, 404, { message: 'Conteúdo não encontrado' });
@@ -159,13 +160,13 @@ const getClients = async (ctx) => {
 				dado.vencimento
 			);
 		});
-		const result = Reports.clientsReport;
-		const pages = Math.ceil(result.size / clientesPorPagina);
+		const result = [...Reports.clientsReport.values()];
+		const pages = Math.ceil(Reports.clientsReport.size / clientesPorPagina);
 		const currentPage = Math.floor(offset / clientesPorPagina) + 1;
 		return response(ctx, 200, {
 			paginaAtual: currentPage,
 			totalDePaginas: pages,
-			clientes: [...result].slice(0, `${clientesPorPagina}`),
+			clientes: result.slice(0, `${clientesPorPagina}`),
 		});
 	}
 	return response(ctx, 404, { message: 'Conteúdo não encontrado' });
