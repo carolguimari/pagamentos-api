@@ -4,7 +4,7 @@
 
 ## :computer: Sobre o projeto
 
-Este é o Back End do trabalho final do curso Programação do Zero da Cubos Academy. Trata-se de uma aplicação para cadastro, geração de cobranças e controle de pagamentos através da geração de relatórios. 
+Este é o Back End do trabalho final do curso Programação do Zero da Cubos Academy. Trata-se de uma aplicação para cadastro, geração de cobranças e controle de pagamentos através da geração de relatórios. O deploy foi realizado através do Heroku e está disponível <a href="https://pagamentos-back.herokuapp.com/"> neste link </a>  para integração com o Front End do projeto que está no <a href="https://github.com/LuaBarbosa/Desafio-4-Front-end"> repositório de Luana Barbosa </a>. 
 
 
 ## :open_file_folder: Descrição
