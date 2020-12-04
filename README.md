@@ -90,11 +90,7 @@ Além dos arquivos da raiz, a pasta 'src' contém cinco pastas: nos controllers 
 
 Este código roda em Node na porta 8081. Para utilizá-lo inicie com <code> npm install </code> para instalar todas as dependências. Em seguida, rode o arquivo <code> src/utils/schema </code> para montar as tabelas. Na raiz também estão os arquivos de configuração do Eslint e Prettier, utilizados para manter a qualidade na formatação do código. Você pode configurar as seguites variáveis (listadas no .env-exemplo): 
 
--  DB_HOST= 
--  DB_USER=
--  DB_PW=
--  DB_NAME=
--  DB_PORT=
+-  DATABASE_URL= 
 -  JWT_SECRET=
 -  PAGARME_API_KEY=
 -  MAILTRAP_HOST=
