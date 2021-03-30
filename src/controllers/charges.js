@@ -17,11 +17,6 @@ const createCharge = async (ctx) => {
 		return response(ctx, 400, { message: 'Requisição mal formatada' });
 	}
 
-	if (!idUser) {
-		return response(ctx, 403, {
-			message: 'Você precisa fazer login para realizar esta ação',
-		});
-	}
 
 	const client = await ClientsDB.getClientById(id, idUser);
 	if (!client) {
@@ -91,11 +86,6 @@ const getCharges = async (ctx) => {
 	const { cobrancasPorPagina = 10, offset = 0 } = ctx.query;
 	const idUser = ctx.state.id;
 
-	if (!idUser) {
-		return response(ctx, 403, {
-			message: 'Você precisa fazer login para realizar esta ação',
-		});
-	}
 
 	const list = await ChargesDB.findCharges(
 		idUser,
@@ -145,13 +135,6 @@ const getCharges = async (ctx) => {
 
 const payCharge = async (ctx) => {
 	const { idDaCobranca = null } = ctx.request.body;
-	const idUser = ctx.state.id;
-
-	if (!idUser) {
-		return response(ctx, 403, {
-			message: 'Você precisa fazer login para realizar esta ação',
-		});
-	}
 
 	const date = new Date();
 	const result = await ChargesDB.payForCharge(idDaCobranca, date);
