@@ -13,8 +13,8 @@ const createUser = async (ctx) => {
 		return response(ctx, 400, { message: 'Requisição mal formatada' });
 	}
 
-	const jaExiste = await UsersDB.getUserByEmail(email);
-	if (jaExiste) {
+	const exists = await UsersDB.getUserByEmail(email);
+	if (exists) {
 		return response(ctx, 403, { message: 'Usuário já cadastrado' });
 	}
 
