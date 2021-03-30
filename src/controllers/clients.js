@@ -22,18 +22,13 @@ const createClient = async (ctx) => {
 	} = ctx.request.body;
 
 	const id_usuario = ctx.state.id;
-	if (!id_usuario) {
-		return response(ctx, 403, {
-			message: 'Você precisa fazer login para realizar esta ação',
-		});
-	}
 
 	if (!nome || !cpf || !email || !tel) {
 		return response(ctx, 400, { message: 'Requisição mal formatada' });
 	}
 
-	const jaExiste = await ClientsDB.getClientByEmail(email);
-	if (jaExiste) {
+	const exists = await ClientsDB.getClientByEmail(email);
+	if (exists) {
 		return response(ctx, 403, { message: 'Cliente já cadastrado' });
 	}
 
